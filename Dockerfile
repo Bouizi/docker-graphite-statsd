@@ -1,33 +1,35 @@
-FROM phusion/baseimage:0.9.18
-MAINTAINER Nathan Hopkins <natehop@gmail.com>
+FROM alpine:3.5
+MAINTAINER Bouizi Yassir <yassir.bouizi@gmail.com>
 
-#RUN echo deb http://archive.ubuntu.com/ubuntu $(lsb_release -cs) main universe > /etc/apt/sources.list.d/universe.list
-RUN apt-get -y update\
- && apt-get -y upgrade
+#RUN update upgrade
+RUN apk add --update\
+ && apk add --upgrade
 
 # dependencies
-RUN apt-get -y --force-yes install vim\
+RUN apk add --no-cache vim\
  nginx\
  python-dev\
- python-flup\
- python-pip\
- python-ldap\
+ py-flup\
+ py-pip\
+ py-pyldap\
  expect\
  git\
  memcached\
- sqlite3\
- libcairo2\
- libcairo2-dev\
- python-cairo\
- python-rrdtool\
- pkg-config\
- nodejs
+ sqlite\
+ py-cairo\
+ rrdtool\
+ pkgconfig\
+ nodejs\
+ musl-dev\
+ gcc\
+ tzdata
 
 # python dependencies
-RUN pip install django==1.5.12\
+RUN pip install --upgrade pip\
+ django==1.5.12\
  python-memcached==1.53\
- django-tagging==0.3.1\
  twisted==11.1.0\
+ django-tagging==0.3.1\
  txAMQP==0.6.2
 
 # install graphite
@@ -58,7 +60,6 @@ RUN python /opt/graphite/webapp/graphite/manage.py collectstatic --noinput
 ADD conf/opt/statsd/config.js /opt/statsd/config.js
 
 # config nginx
-RUN rm /etc/nginx/sites-enabled/default
 ADD conf/etc/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD conf/etc/nginx/sites-enabled/graphite-statsd.conf /etc/nginx/sites-enabled/graphite-statsd.conf
 
@@ -82,8 +83,7 @@ ADD conf /etc/graphite-statsd/conf
 ADD conf/etc/my_init.d/01_conf_init.sh /etc/my_init.d/01_conf_init.sh
 
 # cleanup
-RUN apt-get clean\
- && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # defaults
 EXPOSE 80 2003-2004 2023-2024 8125/udp 8126
