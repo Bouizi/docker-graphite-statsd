@@ -59,7 +59,7 @@ RUN python /opt/graphite/webapp/graphite/manage.py collectstatic --noinput
 # config statsd
 ADD conf/opt/statsd/config.js /opt/statsd/config.js
 
-# config nginx
+# config nginx	
 ADD conf/etc/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD conf/etc/nginx/sites-enabled/graphite-statsd.conf /etc/nginx/sites-enabled/graphite-statsd.conf
 
@@ -90,4 +90,4 @@ EXPOSE 80 2003-2004 2023-2024 8125/udp 8126
 VOLUME ["/opt/graphite/conf", "/opt/graphite/storage", "/etc/nginx", "/opt/statsd", "/etc/logrotate.d", "/var/log"]
 WORKDIR /
 ENV HOME /root
-CMD ["/sbin/my_init"]
+#CMD ["/sbin/my_init"]
